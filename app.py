@@ -101,7 +101,7 @@ def run_ytdlp(args: list) -> tuple:
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return "server working"
 
 
 @app.route("/api/info", methods=["POST"])
