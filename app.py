@@ -17,6 +17,7 @@ from flask import (
     render_template,
     Response,
     stream_with_context,
+    send_file,
 )
 
 app = Flask(__name__)
@@ -219,7 +220,18 @@ def api_info():
     if code != 0:
         err = stderr.lower()
         if any(k in err for k in ("sign in", "age", "login", "bot", "inappropriate")):
-            return jsonify({"real_stderr": stderr}), 403
+            return (
+                jsonify(
+                    {
+                        "error": (
+                            "YouTube is blocking this server. "
+                            "Fix: add VISITOR_DATA to Railway environment variables. "
+                            "Get it by running the console code from the setup instructions."
+                        )
+                    }
+                ),
+                403,
+            )
         if "unavailable" in err or "private" in err:
             return jsonify({"error": "This video is unavailable or private."}), 404
         if "429" in stderr or "too many" in err:
@@ -428,8 +440,6 @@ def api_download():
         ".opus": "audio/ogg",
         ".aac": "audio/aac",
     }.get(actual.suffix.lower(), "application/octet-stream")
-
-    from flask import send_file
 
 	return send_file(
 	    actual,
