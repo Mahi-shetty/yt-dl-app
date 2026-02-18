@@ -440,28 +440,13 @@ def api_download():
         ".aac": "audio/aac",
     }.get(actual.suffix.lower(), "application/octet-stream")
 
-    def generate():
-        with open(actual, "rb") as fh:
-            while chunk := fh.read(65536):
-                yield chunk
-        try:
-            for p in Path(tmp_dir).iterdir():
-                p.unlink(missing_ok=True)
-            Path(tmp_dir).rmdir()
-        except Exception:
-            pass
-
-    return Response(
-        stream_with_context(generate()),
-        mimetype=mime,
-        headers={
-            "Content-Disposition": f'attachment; filename="{dl_name}"',
-            "Content-Length": str(file_size),
-            "X-Accel-Buffering": "no",
-            "Cache-Control": "no-cache",
-        },
+    from flask import send_file
+    
+    return send_file(
+        actual,
+        as_attachment=True,
+        download_name=dl_name
     )
-
 
 @app.route("/api/subtitle", methods=["POST"])
 def api_subtitle():
