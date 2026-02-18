@@ -96,7 +96,7 @@ def human_size(n_bytes):
 
 
 def run_ytdlp(args):
-    cmd = YTDLP + args
+    cmd = YTDLP + ["--js-runtimes", "node"] + args
     result = subprocess.run(
         cmd,
         capture_output=True,
