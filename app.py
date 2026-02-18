@@ -142,6 +142,32 @@ def api_info():
     audio_streams.sort(key=lambda f: f.get("abr") or 0, reverse=True)
     best_audio = audio_streams[0] if audio_streams else None
 
+    audio_formats = []
+
+    if audio_streams:
+        best_audio = audio_streams[0]
+        best_audio_id = best_audio["format_id"]
+        best_audio_abr = int(best_audio.get("abr") or 128)
+    
+        # MP3 tiers (re-encode)
+        for bitrate in ["320", "256", "192", "128"]:
+            audio_formats.append({
+                "format_id": best_audio_id,
+                "ext": "MP3",
+                "bitrate": bitrate,
+                "label": f"{bitrate} kbps",
+                "quality": "Re-encoded",
+            })
+    
+        # Original M4A
+            audio_formats.append({
+                "format_id": best_audio_id,
+                "ext": "M4A",
+                "bitrate": str(best_audio_abr),
+                "label": f"{best_audio_abr} kbps",
+                "quality": "Original",
+           })
+
     # Build video list
     res_map = {}
 
@@ -181,6 +207,7 @@ def api_info():
         "thumbnail": info.get("thumbnail"),
         "duration": format_duration(info.get("duration")),
         "video_formats": video_formats,
+        "audio_formats": audio_formats,
     })
 
 
