@@ -442,10 +442,10 @@ def api_download():
     }.get(actual.suffix.lower(), "application/octet-stream")
 
 	return send_file(
-	    actual,
-	    as_attachment=True,
-	    download_name=dl_name
-	)
+        actual,
+        as_attachment=True,
+        download_name=dl_name
+    )
 
 @app.route("/api/subtitle", methods=["POST"])
 def api_subtitle():
