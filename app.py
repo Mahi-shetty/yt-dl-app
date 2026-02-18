@@ -219,9 +219,7 @@ def api_info():
     if code != 0:
         err = stderr.lower()
         if any(k in err for k in ("sign in", "age", "login", "bot", "inappropriate")):
-            return jsonify({
-				"real_stderr": stderr
-			}), 403
+            return jsonify({"real_stderr": stderr}), 403
         if "unavailable" in err or "private" in err:
             return jsonify({"error": "This video is unavailable or private."}), 404
         if "429" in stderr or "too many" in err:
